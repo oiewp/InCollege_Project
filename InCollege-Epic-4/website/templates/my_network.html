@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}My Network{% endblock %}
+
+{% block content %}
+<h1 align="center">My Network</h1>
+<div class="container">
+    {% if friends %}
+        <ul class="list-group">
+            {% for friend in friends %}
+                <li class="list-group-item">
+                    {{ friend.user_name }} is friends with {{ friend.friend_user_name }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No friends found.</p>
+    {% endif %}
+</div>
+{% endblock %}

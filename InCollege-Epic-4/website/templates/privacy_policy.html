@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}<div class="text-center">Privacy Policy</div>{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1 class="text-center mb-3">Privacy Policy</h1>
+            <p>At InCollege, we respect your privacy and are committed to protecting your personal data. This Privacy Policy will inform you as to how we look after your personal data when you visit our platform and tell you about your privacy rights and how the law protects you.</p>
+            
+            <h2>Information We Collect</h2>
+            <p>We collect and process personal data about you when you interact with our platform, like your name, email address, and educational background. We gather this information to provide you with the services available on our platform.</p>
+            
+            <h2>How We Use Your Information</h2>
+            <p>Your personal data is used to manage your account, provide our services, and enhance your user experience. We may also use your information for marketing purposes with your explicit consent.</p>
+            
+            <h2>Sharing Your Information</h2>
+            <p>We do not share your personal information with third parties except as necessary to fulfill our business obligations and comply with laws.</p>
+            
+            <h2>Your Rights and Choices</h2>
+            <p>You have rights under data protection laws regarding your personal data, including the right to access, correct, or delete your personal information.</p>
+            
+            <form method="POST">
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="emailOption" name="emailOption" {{ 'checked' if user.email_option }}>
+                    <label class="form-check-label" for="emailOption">Receive marketing emails</label>
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="smsOption" name="smsOption" {{ 'checked' if user.sms_option }}>
+                    <label class="form-check-label" for="smsOption">Receive SMS notifications</label>
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="advertisingOption" name="advertisingOption" {{ 'checked' if user.advertising_option }}>
+                    <label class="form-check-label" for="advertisingOption">Receive targeted advertising</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Preferences</button>
+            </form>
+            
+            <h2>Updates to Our Privacy Policy</h2>
+            <p>We may update this policy from time to time. We encourage you to review this policy periodically to be informed of how we are protecting your information.</p>
+            
+            <h2>Contact Information</h2>
+            <p>If you have any questions about this Privacy Policy, please contact us at JohnDoe@gmail.com.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
