@@ -31,7 +31,12 @@ def about():
 @views.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
-  return render_template("home.html", user=current_user)
+    account_name = current_user.accountName
+    pending_requests = Friend.query.filter_by(friend=account_name, status='pending').all()
+    if pending_requests:
+       flash(f"You have {len(pending_requests)} pending friend request(s).", category='success')
+
+    return render_template("home.html", user=current_user)
 
 @views.route('/job-search', methods=['GET', 'POST'])
 @login_required

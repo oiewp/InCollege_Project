@@ -48,8 +48,11 @@ def sign_up():
     fname = request.form.get('fname')
     lname = request.form.get('lname')
     accountName = request.form.get('accountName')
+    major = request.form.get('major')
+    university=request.form.get('university')    
     password1 = request.form.get('password1')
     password2 = request.form.get('password2')
+
 
     user = User.query.filter_by(accountName=accountName).first()
     if user:
@@ -70,7 +73,7 @@ def sign_up():
             category='error')
     else:
       # Store the password directly without hashing
-      new_user = User(fname=fname, lname=lname, accountName=accountName, password=password1)
+      new_user = User(fname=fname, lname=lname, accountName=accountName, password=password1, major=major, university=university)
       db.session.add(new_user)
       db.session.commit()
       login_user(new_user, remember=True)

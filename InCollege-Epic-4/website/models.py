@@ -8,6 +8,8 @@ class User(db.Model, UserMixin):
     fname = db.Column(db.String(150))
     lname = db.Column(db.String(150))
     job = db.relationship('Job', backref='user')
+    major = db.Column(db.String(150))
+    university = db.Column(db.String(150))
 
     # Newly added by Toan
     email_option = db.Column(db.Boolean, default=True)
