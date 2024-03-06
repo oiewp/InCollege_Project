@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}Finder{% endblock %}
+
+{% block content %}
+<style>
+  .main-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+
+  .section {
+    padding-bottom: 20px;
+    /* Space at the bottom of each section */
+    margin-bottom: 40px;
+    /* Additional space between sections */
+    border-bottom: 2px solid #ccc;
+    /* Horizontal line */
+  }
+
+  .result-item {
+    font-size: 18px;
+    /* Increases the font size of the result text */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    /* Adds space between each result item */
+  }
+
+  .result-item button {
+    margin-left: 10px;
+    /* Ensures a little space between the text and the button if needed */
+  }
+
+
+  .section:last-child {
+    border-bottom: none;
+    /* No horizontal line for the last section */
+  }
+
+  .form-group,
+  .list-container {
+    margin-bottom: 20px;
+    margin-top: 20px;
+    /* Creates space between the search button and the results */
+
+  }
+
+  .form-group label,
+  .form-group input,
+  button {
+    display: block;
+    width: 100%;
+    margin-top: 5px;
+  }
+
+  .form-group input,
+  .btn {
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .btn {
+    width: auto;
+    margin-top: 10px;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+</style>
+
+<div class="main-container">
+  <div class="section">
+    <form method="POST">
+      <h3>Search by Last Name</h3>
+      <div class="form-group">
+        <label for="lname"></label>
+        <input type="text" class="form-control" id="lname" name="lname" placeholder="Enter last name" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    {% if match_found %}
+    <div class="list-container">
+      <h3>Matches found:</h3>
+      {% for user, is_friend in matching_users %}
+      {% if user.accountName != current_user.accountName %}
+      <div class="result-item">
+        <span>{{ user.fname }} {{ user.lname }}</span>
+        {% if not is_friend %}
+        <!-- This button is right-aligned due to flex in .result-item -->
+        <a class="btn btn-primary" href="#" onclick="addFriend('{{ user.accountName }}', this); return false;">Add Friend</a>
+
+        {% endif %}
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+
+<script>
+  function addFriend(friendAccountName, element) {
+    fetch('/add-friend', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Assuming you handle authentication via headers, include them as needed
+      },
+      body: JSON.stringify({ friend_account_name: friendAccountName })
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        alert(data.message); // Display a success message
+        // Remove the entire line after successfully adding a friend
+        element.closest('.result-item').remove();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+      });
+  }
+
+
+
+  // function removeFriend(userName, friendUserName, itemElement) {
+  //   fetch('/remove-friend', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       // Include CSRF token header if needed
+  //     },
+  //     body: JSON.stringify({ user_name: userName, friend_user_name: friendUserName })
+  //   })
+  //     .then(response => {
+  //       if (!response.ok) {
+  //         throw new Error('Network response was not ok');
+  //       }
+  //       return response.json();
+  //     })
+  //     .then(data => {
+  //       alert(data.message); // Display success message
+  //       itemElement.remove(); // Remove the item from the list
+  //     })
+  //     .catch(error => {
+  //       console.error('Error:', error);
+  //       alert('An error occurred. Please try again.');
+  //     });
+  // }
+
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %} 
+{% block title %} Profile {% endblock %} 
+{% block content %}
+    <h3 align="center">{{ user.fname }} {{ user.lname }}'s Profile</h3>
+    <!-- Display other profile information here -->
+    <h4>Profile Information:</h4>
+    <p><strong>Title:</strong> {{ profile_data.title }}</p>
+    <p><strong>Major:</strong> {{ profile_data.major }}</p>
+    <p><strong>University:</strong> {{ profile_data.university }}</p>
+    <p><strong>About:</strong> {{ profile_data.about }}</p>
+
+    <h4>Experiences:</h4>
+    <ul>
+        {% if experiences %}
+            {% for experience in experiences[:3] %}
+                <li><strong>Title:</strong> {{ experience.jobTitle }}</li>
+                <li><strong>Location:</strong> {{ experience.jobLocation }}</li>
+                <li><strong>Employed by:</strong> {{ experience.jobEmployer if experience.jobEmployer else 'N/A' }}</li>
+                <li><strong>Duration:</strong> {{ experience.dateStart }} - {{ experience.dateEnd }}</li>                
+                <li><strong>Description:</strong> {{ experience.jobDescription if experience.jobDescription else 'N/A' }}</li>
+                <br><br>
+            {% endfor %}
+        {% else %}
+            <li>N/A</li>
+        {% endif %}
+    </ul>
+
+    <h4>Education:</h4>
+    <ul>
+        {% if educations %}
+            {% for education in educations[:1] %}
+                <li>{{ education.schoolName if education.schoolName else 'N/A' }}, {{ education.degree if education.degree else 'N/A' }}, {{ education.years if education.years else 'N/A' }}</li>
+            {% endfor %}
+        {% else %}
+            <li>N/A</li>
+        {% endif %}
+    </ul>
+{% endblock %}
