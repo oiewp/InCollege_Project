@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block title %}Friend List{% endblock %}
+
+{% block content %}
+<style>
+  .main-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+
+  .section {
+    padding-bottom: 20px;
+    /* Space at the bottom of each section */
+    margin-bottom: 40px;
+    /* Additional space between sections */
+    border-bottom: 2px solid #ccc;
+    /* Horizontal line */
+  }
+
+  .result-item {
+    font-size: 18px;
+    /* Increases the font size of the result text */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    /* Adds space between each result item */
+  }
+
+  .result-item button {
+    margin-left: 10px;
+    /* Ensures a little space between the text and the button if needed */
+  }
+
+
+  .section:last-child {
+    border-bottom: none;
+    /* No horizontal line for the last section */
+  }
+
+  .form-group,
+  .list-container {
+    margin-bottom: 20px;
+    margin-top: 20px;
+    /* Creates space between the search button and the results */
+
+  }
+
+  .form-group label,
+  .form-group input,
+  button {
+    display: block;
+    width: 100%;
+    margin-top: 5px;
+  }
+
+  .form-group input,
+  .btn {
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .btn {
+    width: auto;
+    margin-top: 10px;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+</style>
+
+  <div class="section">
+    <h3>My Network</h3>
+    <ul id="networkList"></ul>
+  </div>
+
+
+  <div class="section" style="border-right: none;">
+    <h3>Pending Friend Requests</h3>
+    <ul id="pendingFriendRequestsList"></ul>
+  </div>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Automatically fetch and display pending friend requests when the page loads
+    fetchPendingFriendRequests();
+
+    fetch('/my-network')
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById('networkList');
+        container.innerHTML = ''; // Clear the list for a fresh display
+        data.forEach(friend => {
+          const item = document.createElement('li');
+          item.textContent = `${friend.user_name} is friends with ${friend.friend_user_name}`;
+
+          const profileButton = document.createElement('button');
+          profileButton.textContent = 'View Profile';
+          profileButton.className = 'btn btn-primary';
+          profileButton.style.marginRight = '10px'; // Add some spacing
+          profileButton.onclick = function () {
+            viewFriendProfile(friend.friend_user_name, item);
+          };
+
+          // Create Remove Friend button
+          const removeButton = document.createElement('button');
+          removeButton.textContent = 'Remove Friend';
+          removeButton.className = 'btn btn-danger';
+          removeButton.onclick = function () {
+            removeFriend(friend.user_name, friend.friend_user_name, item);
+          };
+
+          item.appendChild(profileButton);
+          item.appendChild(document.createTextNode(" "))
+          item.appendChild(removeButton);
+          container.appendChild(item);
+        });
+      })
+      .catch(error => console.error('Error:', error));
+  })
+
+
+  function fetchPendingFriendRequests() {
+    fetch('/pending-friend-requests')
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById('pendingFriendRequestsContainer');
+        const list = document.getElementById('pendingFriendRequestsList');
+        list.innerHTML = ''; // Clear the list for a fresh display
+
+        // print the data from the server
+        console.log(data);
+
+        data.forEach(request => {
+          const item = document.createElement('li');
+          item.textContent = `Pending request from ${request.user_name} to ${request.friend_user_name} `;
+
+          // print the pending friend request
+          console.log(`Pending request from ${request.user_name} to ${request.friend_user_name} `);
+
+          // Create Accept button
+          const acceptButton = document.createElement('button');
+          acceptButton.textContent = 'Accept';
+          acceptButton.className = 'btn btn-success';
+          acceptButton.onclick = function () {
+            handleFriendRequest('accept', request.user_name, request.friend_user_name, item);
+          };
+
+          // Create Delete button
+          const deleteButton = document.createElement('button');
+          deleteButton.textContent = 'Delete';
+          deleteButton.className = 'btn btn-danger';
+          deleteButton.onclick = function () {
+            handleFriendRequest('delete', request.user_name, request.friend_user_name, item);
+          };
+
+          item.appendChild(acceptButton);
+          item.appendChild(document.createTextNode(" ")); // Add space between buttons
+          item.appendChild(deleteButton);
+          list.appendChild(item);
+        });
+        container.style.display = 'block';
+      })
+      .catch(error => console.error('Error:', error));
+  }
+
+  function handleFriendRequest(action, userName, friendUserName, itemElement) {
+    const endpoint = action === 'accept' ? '/accept-friend-request' : '/delete-friend-request';
+    fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Include CSRF token header if needed
+      },
+      body: JSON.stringify({ user_name: userName, friend_user_name: friendUserName })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
+          alert(`${data.message}: ${data.user_name} and ${data.friend_user_name}`);
+          itemElement.remove(); // Remove the item from the list
+        } else {
+          throw new Error(data.error || 'Failed to process request.');
+        }
+      })
+      .catch(error => {
+        console.error(`Error ${action}ing friend request:`, error);
+        alert(`Error ${action}ing friend request. Please try again.`);
+      });
+  }
+
+
+  function addFriend(friendAccountName, element) {
+    fetch('/add-friend', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Assuming you handle authentication via headers, include them as needed
+      },
+      body: JSON.stringify({ friend_account_name: friendAccountName })
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        alert(data.message); // Display a success message
+        // Remove the entire line after successfully adding a friend
+        element.closest('.result-item').remove();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+      });
+  }
+
+
+
+  function removeFriend(userName, friendUserName, itemElement) {
+    fetch('/remove-friend', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Include CSRF token header if needed
+      },
+      body: JSON.stringify({ user_name: userName, friend_user_name: friendUserName })
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        alert(data.message); // Display success message
+        itemElement.remove(); // Remove the item from the list
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+      });
+  }
+
+  function viewFriendProfile(friendUserName, itemElement) {
+    // Construct the URL with the friend's username as a query parameter
+    const url = new URL('/view_friend_profile', window.location.origin);
+    url.searchParams.append('friend_user_name', friendUserName);
+  
+    // Use window.location to navigate to the new URL
+    window.location.href = url.href;
+  }
+
+</script>
+
+{% endblock %}

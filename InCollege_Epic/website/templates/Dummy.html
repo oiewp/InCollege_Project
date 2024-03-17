@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}Finder{% endblock %}
+
+{% block content %}
+<form method="POST">
+    <h1 align="center">Search by Last Name</h1>
+    <div class="form-group">
+        <label for="lname">Last Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="lname"
+          name="lname"
+          placeholder="Enter last name"
+          required
+        />
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<br />
+<!-- Button to trigger showing My Network -->
+<div align="center">
+    <button id="showNetwork" class="btn btn-info">Show My Network</button>
+</div>
+
+<!-- Container for dynamically displaying network information -->
+<div id="networkContainer" style="display:none;">
+    <h3 align="center">My Network</h3>
+    <ul id="networkList"></ul>
+</div>
+
+<!-- Section for displaying pending friend requests -->
+<div id="pendingFriendRequestsContainer" style="display:none;">
+    <h3 align="center">Pending Friend Requests</h3>
+    <ul id="pendingFriendRequestsList"></ul>
+</div>
+
+{% if match_found %}
+    <h3>Matches found:</h3>
+    {% for user, is_friend in matching_users %}
+        {% if user.accountName != current_user.accountName %}
+            <h6>{{ user.fname }} {{ user.lname }}</h6>
+            <!-- Only display the Add Friend button if is_friend is False -->
+            {% if not is_friend %}
+                <a class="btn btn-primary" href="#" onclick="addFriend('{{ user.accountName }}'); return false;">Add Friend</a>
+            {% endif %}
+            <br><br>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetchPendingFriendRequests();
+});
+
+document.getElementById('showNetwork').addEventListener('click', function() {
+    fetch('/my-network')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('networkContainer');
+            const list = document.getElementById('networkList');
+            list.innerHTML = ''; // Clear the list for a fresh display
+            data.forEach(friend => {
+                const item = document.createElement('li');
+                item.textContent = `${friend.user_name} is friends with ${friend.friend_user_name} `;
+                
+                
+                list.appendChild(item);
+            });
+            container.style.display = 'block'; // Make the network container visible
+        })
+        .catch(error => console.error('Error:', error));
+});
+
+function fetchPendingFriendRequests() {
+    fetch('/pending-friend-requests')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('pendingFriendRequestsContainer');
+            const list = document.getElementById('pendingFriendRequestsList');
+            list.innerHTML = ''; // Clear the list for a fresh display
+            data.forEach(request => {
+                const item = document.createElement('li');
+                item.textContent = `Pending request from ${request.user_name} to ${request.friend_user_name} `;
+                
+                // Create Accept button
+                const acceptButton = document.createElement('button');
+                acceptButton.textContent = 'Accept';
+                acceptButton.className = 'btn btn-success';
+                acceptButton.onclick = function() { 
+                    handleFriendRequest('accept', request.user_name, request.friend_user_name, item); 
+                };
+                
+                // Create Delete button
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.className = 'btn btn-danger';
+                deleteButton.onclick = function() { 
+                    handleFriendRequest('delete', request.user_name, request.friend_user_name, item); 
+                };
+                
+                item.appendChild(acceptButton);
+                item.appendChild(document.createTextNode(" ")); // Add space between buttons
+                item.appendChild(deleteButton);
+                list.appendChild(item);
+            });
+            container.style.display = 'block';
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function handleFriendRequest(action, userName, friendUserName, itemElement) {
+    const endpoint = action === 'accept' ? '/accept-friend-request' : '/delete-friend-request';
+    fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            // Include CSRF token header if needed
+        },
+        body: JSON.stringify({ user_name: userName, friend_user_name: friendUserName })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            alert(`${data.message}: ${data.user_name} and ${data.friend_user_name}`);
+            itemElement.remove(); // Remove the item from the list
+        } else {
+            throw new Error(data.error || 'Failed to process request.');
+        }
+    })
+    .catch(error => {
+        console.error(`Error ${action}ing friend request:`, error);
+        alert(`Error ${action}ing friend request. Please try again.`);
+    });
+}
+
+
+function addFriend(friendAccountName) {
+    fetch('/add-friend', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            // Assuming you handle authentication via headers, include them as needed
+        },
+        body: JSON.stringify({ friend_account_name: friendAccountName })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert(data.message); // Display a success message
+        // Optionally, refresh part of your page or update UI to reflect the new friend connection
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+}
+
+
+
+</script>
+
+{% endblock %}

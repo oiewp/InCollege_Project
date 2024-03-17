@@ -1,0 +1,153 @@
+{% extends "base.html" %} {% block title %}Edit Profile{% endblock %} {% block
+    content %}
+    <form method="POST">
+      <h3 align="center">Edit Profile</h3>
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input
+          type="text"
+          class="form-control"
+          id="title"
+          name="title"
+          placeholder="Enter title"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="major">Major</label>
+        <input
+          type="text"
+          class="form-control"
+          id="major"
+          name="major"
+          placeholder="Enter major"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="university">University</label>
+        <input
+          type="text"
+          class="form-control"
+          id="university"
+          name="university"
+          placeholder="Enter university"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="about">About Me</label>
+        <input
+          type="text"
+          class="form-control"
+          id="about"
+          name="about"
+          placeholder="Describe a little bit about yourself"
+          required
+        />
+      </div>
+      <h4 align="center">Add Experience</h4>
+      <div class="form-group">
+        <label for="jobTitle">Job Title</label>
+        <input
+          type="text"
+          class="form-control"
+          id="jobTitle"
+          name="jobTitle"
+          placeholder="Enter job title"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="jobEmployer">Employer</label>
+        <input
+          type="text"
+          class="form-control"
+          id="jobEmployer"
+          name="jobEmployer"
+          placeholder="Enter employer"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="dateStart">Date Started</label>
+        <input
+          type="text"
+          class="form-control"
+          id="dateStart"
+          name="dateStart"
+          placeholder="Enter date started"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="dateEnd">Date Ended</label>
+        <input
+          type="text"
+          class="form-control"
+          id="dateEnd"
+          name="dateEnd"
+          placeholder="Enter date ended"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="jobLocation">Location</label>
+        <input
+          type="text"
+          class="form-control"
+          id="jobLocation"
+          name="jobLocation"
+          placeholder="Enter location"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="jobDescription">Job Description</label>
+        <input
+          type="text"
+          class="form-control"
+          id="jobDescription"
+          name="jobDescription"
+          placeholder="Enter job description"
+          required
+        />
+      </div>
+      <h4 align="center">Education</h4>
+      <div class="form-group">
+        <label for="schoolName">School Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="schoolName"
+          name="schoolName"
+          placeholder="Enter school name"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="degree">Degree</label>
+        <input
+          type="text"
+          class="form-control"
+          id="degree"
+          name="degree"
+          placeholder="Enter degree"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="years">Years Attended</label>
+        <input
+          type="text"
+          class="form-control"
+          id="years"
+          name="years"
+          placeholder="Enter years attended"
+          required
+        />
+      </div>
+      <br />
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    {% endblock %}

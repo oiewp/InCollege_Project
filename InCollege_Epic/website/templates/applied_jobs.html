@@ -1,0 +1,125 @@
+{% extends "base.html" %} {% block title %}Job Search{% endblock %} {% block
+content %}
+<style>
+  .main-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+
+  .section {
+    padding-bottom: 20px;
+    /* Space at the bottom of each section */
+    margin-bottom: 40px;
+    /* Additional space between sections */
+    border-bottom: 2px solid #ccc;
+    /* Horizontal line */
+  }
+
+  .result-item {
+    font-size: 18px;
+    /* Increases the font size of the result text */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    /* Adds space between each result item */
+  }
+
+  .result-item button {
+    margin-left: 10px;
+    /* Ensures a little space between the text and the button if needed */
+  }
+
+  .section:last-child {
+    border-bottom: none;
+    /* No horizontal line for the last section */
+  }
+
+  .form-group,
+  .list-container {
+    margin-bottom: 20px;
+    margin-top: 20px;
+    /* Creates space between the search button and the results */
+  }
+
+  .form-group label,
+  .form-group input,
+  button {
+    display: block;
+    width: 100%;
+    margin-top: 5px;
+  }
+
+  .form-group input,
+  .btn {
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .btn {
+    width: auto;
+    margin-top: 10px;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+</style>
+<h1 align="center">Jobs Applied For</h1>
+<div class="section">
+  <h3>Job Listings</h3>
+  <ul id="jobList"></ul>
+</div>
+<a class="btn btn-primary" href="/job-search">Back</a>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("/job-network")
+          .then(response => response.json())
+          .then(data => {
+            const container = document.getElementById("jobList");
+            container.innerHTML = "";
+            data.forEach(job => {
+                if (job.has_applied) {
+                    const item = document.createElement("li");
+                    item.textContent = `${job.job_title}`;
+
+                    const jobButton = document.createElement("button");
+                    jobButton.textContent = "View Job Details";
+                    jobButton.className = "btn btn-primary";
+                    jobButton.style.marginRight = "10px";
+                    jobButton.onclick = function () {
+                        viewJob(job.job_id, item);
+                    };
+
+                    item.appendChild(jobButton);
+                    item.appendChild(document.createTextNode(" "));
+                    container.appendChild(item);
+                }
+            });
+
+          }) 
+          .catch(error => console.error("Error:", error));
+      });
+
+
+  function viewJob(jobName, itemElement) {
+    // Construct the URL with the friend's username as a query parameter
+    const url = new URL("/view-job", window.location.origin);
+    url.searchParams.append("job_id", jobName);
+
+    // Redirect the user to the constructed URL
+    window.location.href = url.toString();
+  }
+</script>
+{% endblock %}
