@@ -1,0 +1,131 @@
+{% extends "base.html" %} {% block title %}Edit Profile{% endblock %} {% block content %}
+    <form method="POST">
+      <h3 align="center">Edit Profile</h3>
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input
+          type="text"
+          class="form-control"
+          id="title"
+          name="title"
+          placeholder="Enter title"
+          value="{{ profile_data['title'] if profile_data['title'] else '' }}"
+        />
+      </div>
+      <div class="form-group">
+        <label for="major">Major</label>
+        <input
+          type="text"
+          class="form-control"
+          id="major"
+          name="major"
+          placeholder="Enter major"
+          value="{{ profile_data['major'] if profile_data['major'] else '' }}"
+        />
+      </div>
+      <div class="form-group">
+        <label for="university">University</label>
+        <input
+          type="text"
+          class="form-control"
+          id="university"
+          name="university"
+          placeholder="Enter university"
+          value="{{ profile_data['university'] if profile_data['university'] else '' }}"
+        />
+      </div>
+      <div class="form-group">
+        <label for="about">About Me</label>
+        <input
+          type="text"
+          class="form-control"
+          id="about"
+          name="about"
+          placeholder="Describe a little bit about yourself"
+          value="{{ profile_data['about'] if profile_data['about'] else '' }}"
+        />
+      </div>
+      <h4 class="text-center">Add Experiences</h4>
+{% for i in range(1, 4) %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="jobTitle_{{ i }}">Job Title {{ i }}</label>
+            <input type="text" class="form-control" id="jobTitle_{{ i }}" name="jobTitle_{{ i }}" placeholder="Enter job title"
+            value="{{ experiences[i-1].jobTitle if (i <= numSaved) else ''}}">
+        </div>
+        <div class="form-group">
+            <label for="dateStart_{{ i }}">Date Started {{ i }}</label>
+            <input type="text" class="form-control" id="dateStart_{{ i }}" name="dateStart_{{ i }}" placeholder="Enter date started"
+            value="{{ experiences[i-1].dateStart if (i <= numSaved) else ''}}">
+        </div>
+        <div class="form-group">
+            <label for="jobLocation_{{ i }}">Location {{ i }}</label>
+            <input type="text" class="form-control" id="jobLocation_{{ i }}" name="jobLocation_{{ i }}" placeholder="Enter location"
+            value="{{ experiences[i-1].jobLocation if (i <= numSaved) else ''}}">
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="jobEmployer_{{ i }}">Employer {{ i }}</label>
+            <input type="text" class="form-control" id="jobEmployer_{{ i }}" name="jobEmployer_{{ i }}" placeholder="Enter employer" 
+            value="{{ experiences[i-1].jobEmployer if (i <= numSaved) else ''}}">
+        </div>
+        <div class="form-group">
+            <label for="dateEnd_{{ i }}">Date Ended {{ i }}</label>
+            <input type="text" class="form-control" id="dateEnd_{{ i }}" name="dateEnd_{{ i }}" placeholder="Enter date ended" 
+            value="{{ experiences[i-1].dateEnd if (i <= numSaved) else ''}}">
+        </div>
+        <div class="form-group">
+            <label for="jobDescription_{{ i }}">Job Description {{ i }}</label>
+            <input type="text" class="form-control" id="jobDescription_{{ i }}" name="jobDescription_{{ i }}" placeholder="Enter job description" 
+            value="{{ experiences[i-1].jobDescription if (i <= numSaved) else ''}}">
+        </div>
+    </div>
+</div>
+{% if i < 3 %}
+<!-- Add wider space between experiences -->
+<div style="margin-bottom: 80px;"></div>
+{% endif %}
+{% endfor %}
+
+      <h4 align="center">Education</h4>
+      <div class="form-group">
+        <label for="schoolName">School Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="schoolName"
+          name="schoolName"
+          placeholder="Enter school name"
+          value="{{ education.schoolName if education else '' }}"
+        />
+      </div>
+      <div class="form-group">
+        <label for="degree">Degree</label>
+        <input
+          type="text"
+          class="form-control"
+          id="degree"
+          name="degree"
+          placeholder="Enter degree"
+          value="{{ education.degree if education else '' }}"
+          
+        />
+      </div>
+      <div class="form-group">
+        <label for="years">Years Attended</label>
+        <input
+          type="text"
+          class="form-control"
+          id="years"
+          name="years"
+          placeholder="Enter years attended"
+          value="{{ education.years if education else '' }}"
+          
+        />
+      </div>
+      <br />
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    {% endblock %}

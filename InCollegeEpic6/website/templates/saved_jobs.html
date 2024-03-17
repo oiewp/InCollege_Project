@@ -1,0 +1,204 @@
+{% extends "base.html" %} {% block title %}Job Search{% endblock %} {% block
+    content %}
+    <style>
+      .main-container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+    
+      .section {
+        padding-bottom: 20px;
+        /* Space at the bottom of each section */
+        margin-bottom: 40px;
+        /* Additional space between sections */
+        border-bottom: 2px solid #ccc;
+        /* Horizontal line */
+      }
+    
+      .result-item {
+        font-size: 18px;
+        /* Increases the font size of the result text */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        /* Adds space between each result item */
+      }
+    
+      .result-item button {
+        margin-left: 10px;
+        /* Ensures a little space between the text and the button if needed */
+      }
+    
+      .section:last-child {
+        border-bottom: none;
+        /* No horizontal line for the last section */
+      }
+    
+      .form-group,
+      .list-container {
+        margin-bottom: 20px;
+        margin-top: 20px;
+        /* Creates space between the search button and the results */
+      }
+    
+      .form-group label,
+      .form-group input,
+      button {
+        display: block;
+        width: 100%;
+        margin-top: 5px;
+      }
+    
+      .form-group input,
+      .btn {
+        padding: 10px;
+        box-sizing: border-box;
+      }
+    
+      .btn {
+        width: auto;
+        margin-top: 10px;
+      }
+    
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+    
+      li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+    
+      .hidden {
+        visibility: hidden;
+      }
+    </style>
+    <h1 align="center">Job/Internship Search</h1>
+    <div class="section">
+      <h3>Job Listings</h3>
+      <ul id="jobList"></ul>
+    </div>
+    <a class="btn btn-primary" href="/job-search">Back</a>
+    
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        fetch("/job-network")
+          .then((response) => response.json())
+          .then((data) => {
+            const container = document.getElementById("jobList");
+            container.innerHTML = "";
+            data.forEach((job) => {
+                if (job.is_saved) {
+              const item = document.createElement("li");
+              item.className = "job-listing"; // Add a class for styling
+              item.textContent = `${job.job_title}`;
+    
+              const jobButton = document.createElement("button");
+              jobButton.textContent = "View Job Details";
+              jobButton.className = "btn btn-primary";
+              jobButton.onclick = function () {
+                viewJob(job.job_id, item);
+              };
+    
+              // Container for the action elements (apply, delete, saved, etc.)
+              const actionsContainer = document.createElement("div");
+              actionsContainer.className = "actions";
+    
+              const applyButton = document.createElement("a");
+              applyButton.textContent = "Apply";
+              applyButton.className =
+                "btn btn-success action-btn" +
+                (!job.is_poster && !job.has_applied ? "" : " hidden");
+              applyButton.href = `/job-apply/${job.job_id}`;
+    
+              const saveButton = document.createElement("button");
+              saveButton.className = "btn btn-primary";
+              if (job.is_saved) {
+                saveButton.textContent = "Unsave";
+                saveButton.onclick = function () {
+                  unsaveJob(job.job_id);
+                };
+              } else {
+                saveButton.textContent = "Save";
+                saveButton.onclick = function () {
+                  saveJob(job.job_id);
+                };
+              }
+    
+              // Append elements to the list item
+              item.appendChild(jobButton);
+              item.appendChild(applyButton);
+              item.appendChild(actionsContainer); // Append the container with action elements
+              // Decide which action to show
+              if (!job.is_poster && !job.has_applied) {
+                // User is not the poster, show "Save" button
+                item.appendChild(saveButton);
+              }
+              container.appendChild(item); // Append the list item to the container
+            }
+            });
+          })
+          .catch((error) => console.error("Error:", error));
+      });
+    
+      function saveJob(jobId) {
+        // Example saveJob function, adjust according to your actual API endpoint and logic
+        fetch(`/save-job/${jobId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Include CSRF token if needed
+          },
+          // Authentication and additional data might be required depending on your backend setup
+        })
+          .then((response) => {
+            if (response.ok) {
+              alert("Job saved successfully.");
+              // Update the UI accordingly
+            } else {
+              alert("Failed to save the job.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+    
+      function unsaveJob(jobId) {
+        fetch(`/unsave-job/${jobId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                // Include CSRF token if needed
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Job unsaved successfully.");
+                // Optionally: Refresh the job list or update the UI to reflect the new state
+            } else {
+                alert("Failed to unsave the job.");
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    }
+    
+      function viewJob(jobName, itemElement) {
+        // Construct the URL with the friend's username as a query parameter
+        const url = new URL("/view-job", window.location.origin);
+        url.searchParams.append("job_id", jobName);
+    
+        // Redirect the user to the constructed URL
+        window.location.href = url.toString();
+      }
+    
+    
+    </script>
+    {% endblock %}
+    

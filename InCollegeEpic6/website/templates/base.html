@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Inside the <head> section of your HTML template -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      crossorigin="anonymous"
+    />
+
+    <title>{% block title %}Home{% endblock %}</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar">
+        <ul class="navbar-nav">
+          <!-- Useful Links Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="usefulLinksDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Useful Links
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="usefulLinksDropdown">
+              <!-- Multi-level Dropdown for General -->
+              <li class="dropdown-submenu">
+                <a class="dropdown-item dropdown-toggle" href="#">General</a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="/sign-up">Sign Up</a></li>
+                  <li><a class="dropdown-item" href="/help-center">Help Center</a></li>
+                  <li><a class="dropdown-item" href="/about">About</a></li>
+                  <li><a class="dropdown-item" href="/press">Press</a></li>
+                  <li><a class="dropdown-item" href="/blog">Blog</a></li>
+                  <li><a class="dropdown-item" href="/careers">Careers</a></li>
+                  <li><a class="dropdown-item" href="/developers">Developers</a></li>
+                </ul>
+              </li>
+              <li><a class="dropdown-item" href="/browse-incollege">Browse InCollege</a></li>
+              <li><a class="dropdown-item" href="/business-solutions">Business Solutions</a></li>
+              <li><a class="dropdown-item" href="/directories">Directories</a></li>
+            </ul>
+          </li>
+          <!-- InCollege Important Links Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="inCollegeImportantLinksDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              InCollege Important Links
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="inCollegeImportantLinksDropdown">
+              <li><a class="dropdown-item" href="/copyright-notice">Copyright Notice</a></li>
+              <li><a class="dropdown-item" href="/about">About</a></li>
+              <li><a class="dropdown-item" href="/accessibility">Accessibility</a></li>
+              <li><a class="dropdown-item" href="/user-agreement">User Agreement</a></li>
+              <li><a class="dropdown-item" href="/privacy-policy">Privacy Policy</a></li>
+              <li><a class="dropdown-item" href="/cookie-policy">Cookie Policy</a></li>
+              <li><a class="dropdown-item" href="/copyright-policy">Copyright Policy</a></li>
+              <li><a class="dropdown-item" href="/brand-policy">Brand Policy</a></li>
+              <li><a class="dropdown-item" href="/languages">Languages</a></li>
+            </ul>
+          </li>
+
+          <!-- Conditional Links for Authenticated / Unauthenticated Users -->
+          {% if user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link" href="/home">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/job-search">Jobs</a></li>
+          <!-- Find a Friend Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="findAFriendDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Find a Friend
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="findAFriendDropdown">
+              <li><a class="dropdown-item" href="/finder">Search by Last Name</a></li>
+              <li><a class="dropdown-item" href="/search-uni">Search by University</a></li>
+              <li><a class="dropdown-item" href="/search-major">Search by Major</a></li>
+              <li><a class="dropdown-item" href="/friend-list">View Friends</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="/skills">Learn</a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+              Profile
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="/create_profile">Create Profile</a>
+                <a class="dropdown-item" href="/view_profile">View Profile</a>
+            </div>
+        </li>
+          <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+          {% else %}
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="/sign-up">Sign Up</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+                
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %} {% if category ==
+    'error' %}
+    <div class="alert alert-danger alter-dismissable fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% else %}
+    <div class="alert alert-success alter-dismissable fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endif %} {% endfor %} {% endif %} {% endwith %}
+
+    <div class="container">{% block content %} {% endblock %}</div>
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+
+  </body>
+</html>
