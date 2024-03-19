@@ -1,0 +1,63 @@
+{% extends "base.html" %} {% block title %}Job Search{% endblock %} {% block content%}
+    <form method="POST">
+        <h3 align="center">Post a Job</h3>
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input
+            type="text"
+            class="form-control"
+            id="title"
+            name="title"
+            placeholder="Enter title"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <input
+            type="text"
+            class="form-control"
+            id="description"
+            name="description"
+            placeholder="Enter description"
+            required
+          />
+        </div>
+        <div class="form-group">
+            <label for="employer">Employer</label>
+            <input
+              type="text"
+              class="form-control"
+              id="employer"
+              name="employer"
+              placeholder="Enter employer"
+              required
+            />
+        </div>
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input
+              type="text"
+              class="form-control"
+              id="location"
+              name="location"
+              placeholder="Enter location"
+              required
+            />
+        </div>
+        <div class="form-group">
+            <label for="salary">Salary</label>
+            <input
+              type="number"
+              class="form-control"
+              id="salary"
+              name="salary"
+              placeholder="Enter salary"
+              required
+            />
+        </div>
+        <br />
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a class="btn btn-primary" href="/job-search">Back</a>
+    </form>
+{% endblock %}

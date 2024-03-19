@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Language Preference{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="font-weight-bold">Language Preference</h1>
+            <!-- Display current language -->
+            <h3>Current Language: {{ user.language }}</h3>
+            <form method="post">
+                <div class="form-group">
+                    <label for="languageSelect">Select Your Language:</label>
+                    <select class="form-control" id="languageSelect" name="language">
+                        <option value="English" {% if user.language == 'English' %}selected{% endif %}>English</option>
+                        <option value="Spanish" {% if user.language == 'Spanish' %}selected{% endif %}>Español</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Language</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
