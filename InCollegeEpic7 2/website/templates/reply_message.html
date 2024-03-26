@@ -1,0 +1,62 @@
+{% extends "base.html" %} {% block title %}Job Search{% endblock %} {% block
+content%}
+<form method="POST">
+  <h3 align="center">Reply to message</h3>
+  <h3 align="center">{{ message_data.sender_name }}'s Message</h3>
+  <!-- Display other profile information here -->
+  <p><strong>{{ message_data.header }}</strong></p>
+  <p>{{ message_data.content }}</p>
+    <br />
+  <div class="form-group">
+    <label for="description">Header</label>
+    <input
+      type="text"
+      class="form-control"
+      id="header"
+      name="header"
+      placeholder="Enter header"
+      required
+    />
+  </div>
+  <div class="form-group">
+    <label for="employer">Content</label>
+    <input
+      type="text"
+      class="form-control"
+      id="content"
+      name="content"
+      placeholder="Enter content"
+      required
+    />
+  </div>
+  <br />
+  <button type="submit" class="btn btn-primary">Send</button>
+  <a class="btn btn-primary" href="/messaging">Back</a>
+</form>
+
+<script>
+  fetch("/list-users")
+    .then((response) => response.json())
+    .then((data) => {
+      const select = document.getElementById("users");
+      data.forEach((user) => {
+        const option = document.createElement("option");
+        option.value = user.id;
+        option.text = user.fname + ` ` + user.lname;
+        select.appendChild(option);
+      });
+    });
+
+  fetch("/my-network")
+    .then((response) => response.json())
+    .then((data) => {
+      const select = document.getElementById("friends");
+      data.forEach((user) => {
+        const option = document.createElement("option");
+        option.value = user.friend_id;
+        option.text = user.friend_fname + ` ` + user.friend_lname;
+        select.appendChild(option);
+      });
+    });
+</script>
+{% endblock %}

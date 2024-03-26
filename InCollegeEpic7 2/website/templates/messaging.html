@@ -1,0 +1,170 @@
+{% extends "base.html" %} {% block title %}Messaging{% endblock %} {% block
+content %}
+<style>
+  .main-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+
+  .section {
+    padding-bottom: 20px;
+    /* Space at the bottom of each section */
+    margin-bottom: 40px;
+    /* Additional space between sections */
+    border-bottom: 2px solid #ccc;
+    /* Horizontal line */
+  }
+
+  .result-item {
+    font-size: 18px;
+    /* Increases the font size of the result text */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    /* Adds space between each result item */
+  }
+
+  .result-item button {
+    margin-left: 10px;
+    /* Ensures a little space between the text and the button if needed */
+  }
+
+  .section:last-child {
+    border-bottom: none;
+    /* No horizontal line for the last section */
+  }
+
+  .form-group,
+  .list-container {
+    margin-bottom: 20px;
+    margin-top: 20px;
+    /* Creates space between the search button and the results */
+  }
+
+  .form-group label,
+  .form-group input,
+  button {
+    display: block;
+    width: 100%;
+    margin-top: 5px;
+  }
+
+  .form-group input,
+  .btn {
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .btn {
+    width: auto;
+    margin-top: 10px;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+</style>
+
+<div class="section">
+  <h1>Inbox</h1>
+  <ol id="inbox"></ol>
+</div>
+
+<a href="/send-message" class="btn btn-primary">Send a Message</a>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    fetch("/my-inbox")
+      .then((response) => response.json())
+      .then((data) => {
+        const container = document.getElementById("inbox");
+        container.innerHTML = ""; // Clear the list for a fresh display
+        data.forEach((message) => {
+          const item = document.createElement("li");
+          item.textContent = `${message.sender_name}: ${message.header}`;
+
+          const messageButton = document.createElement("button");
+          messageButton.textContent = "View Message";
+          messageButton.className = "btn btn-primary";
+          messageButton.style.marginRight = "10px"; // Add some spacing
+          messageButton.onclick = function () {
+            viewMessage(message.id, item);
+          };
+
+          const replyButton = document.createElement("a");
+          replyButton.textContent = "Reply";
+          replyButton.className = "btn btn-primary";
+          replyButton.style.marginRight = "10px";
+          replyButton.href = `/reply-message/${message.id}`;
+
+          const deleteButton = document.createElement("button");
+          deleteButton.textContent = "Delete";
+          deleteButton.className = "btn btn-danger action-btn";
+          deleteButton.onclick = function () {
+            deleteMessage(message.id);
+          };
+
+          item.appendChild(messageButton);
+          item.appendChild(document.createTextNode(" "));
+          item.appendChild(replyButton);
+          item.appendChild(document.createTextNode(" "));
+          item.appendChild(deleteButton);
+          container.appendChild(item);
+        });
+      })
+      .catch((error) => console.error("Error:", error));
+  });
+
+  function viewMessage(messageId, itemElement) {
+    const url = new URL("/view-message", window.location.origin);
+    url.searchParams.append("message_id", messageId);
+
+    // Redirect the user to the constructed URL
+    window.location.href = url.toString();
+  }
+
+  function replyMessage(messageId, itemElement) {
+    const url = new URL("/reply-message", window.location.origin);
+    url.searchParams.append("message_id", messageId);
+
+    // Redirect the user to the constructed URL
+    window.location.href = url.toString();
+  }
+
+  function deleteMessage(messageId) {
+    fetch(`/delete-message/${messageId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          alert("Message deleted successfully.");
+          // Optionally, refresh the job list or remove the job from the UI
+          location.reload(); // Or better, remove the element representing the job
+        } else {
+          alert("Failed to delete the message.");
+          // Handle different error statuses (e.g., unauthorized, not found)
+          response.json().then((data) => {
+            console.error(data.error);
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %} 
+{% block title %} Message {% endblock %} 
+{% block content %}
+    <h3 align="center">{{ message_data.sender_name }}'s Message</h3>
+    <!-- Display other profile information here -->
+    <p><strong>{{ message_data.header }}</strong></p>
+    <p>{{ message_data.content }}</p>
+    <a class="btn btn-primary" href="/messaging">Back</a>
+{% endblock %}
